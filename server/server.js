@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import "dotenv/config";
 import connectDB from "./configs/db.js";
+import userRouter from "./routes/userRoutes.js";
 
 // Initialize Express App
 const app = express();
@@ -16,6 +17,7 @@ app.use(express.json());
 
 // Basic Route
 app.get("/", (req, res) => res.send("Server is running..."));
+app.use("/api/user", userRouter);
 
 // Start the server
 app.listen(PORT, () =>
