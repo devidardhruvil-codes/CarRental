@@ -58,3 +58,80 @@ export const addCar = async (req, res) => {
     });
   }
 };
+
+// API to list all cars of owner
+export const getOwnerCars = async (req, res) => {
+  try {
+    const { _id } = req.user;
+    const cars = await Car.find({ owner: _id });
+    res.json({ success: true, cars });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+// API to Toggle Car Availability
+export const toggleCarAvailability = async (req, res) => {
+  try {
+    const { _id } = req.user;
+    const { carId } = req.body;
+    const car = await Car.findById(carId);
+
+    // Check if the car belongs to the owner
+    if (car.owner.toString() !== _id.toString()) {
+      res.status(403).json({
+        success: false,
+        message: "You are not authorized to update this car",
+      });
+    }
+
+    car.isAvailable = !car.isAvailable;
+    await car.save();
+    res.json({
+      success: true,
+      message: `Car is now ${car.isAvailable ? "available" : "unavailable"}`,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+// API to delete a car
+export const deleteCar = async (req, res) => {
+  try {
+    const { _id } = req.user;
+    const { carId } = req.params;
+    const car = await Car.findById(carId);
+
+    // Check if the car belongs to the owner
+    if (car.owner.toString() !== _id.toString()) {
+      res.status(403).json({
+        success: false,
+        message: "You are not authorized to delete this car",
+      });
+    }
+
+    car.owner = null;
+    car.isAvailable = false;
+    await car.save();
+
+    res.json({
+      success: true,
+      message: "Car removed successfully",
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
