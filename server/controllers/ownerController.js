@@ -135,3 +135,18 @@ export const deleteCar = async (req, res) => {
     });
   }
 };
+
+// API to get Dashboard data
+export const getOwnerDashboard = async (req, res) => {
+  try {
+    const { _id, role } = req.user;
+    if (role !== "owner") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied. Only owners can access the dashboard.",
+      });
+    }
+
+    const cars = await Car.find({ owner: _id });
+  } catch (error) {}
+};
