@@ -186,3 +186,42 @@ export const getDashboardData = async (req, res) => {
     });
   }
 };
+
+// API to update User image
+export const updateUserImage = async (req, res) => {
+  try {
+    const { _id } = req.user;
+    const imageFile = req.file;
+
+    // Upload Image to ImageKit
+    const fileBuffer = fs.readFileSync(imageFile.path);
+    const response = await imagekit.upload({
+      file: fileBuffer,
+      fileName: imageFile.originalname,
+      folder: "/users",
+    });
+
+    // Optimization through imagekit URL transformation
+    var optimizedImageURL = imagekit.url({
+      path: response.filePath,
+      transformation: [
+        { width: "400" },
+        { quality: "auto" },
+        { format: "webp" },
+      ],
+    });
+
+    const image = optimizedImageURL;
+    await User.findByIdAndUpdate(_id, { image });
+    res.json({
+      success: true,
+      message: "User image updated successfully",
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
