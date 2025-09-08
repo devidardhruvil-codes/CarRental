@@ -19,43 +19,6 @@ export const AppProvider = ({ children }) => {
   const [returnDate, setReturnDate] = useState("");
   const [cars, setCars] = useState([]);
 
-  const value = {
-    navigate,
-    currency,
-    token,
-    setToken,
-    user,
-    setUser,
-    owner,
-    setOwner,
-    showLogin,
-    setShowLogin,
-    pickupDate,
-    setPickupDate,
-    returnDate,
-    setReturnDate,
-    cars,
-    setCars,
-    fetchCars,
-    fetchUser,
-    logout,
-  };
-
-  // UseEffect to fetch token from localstorage
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setToken(token);
-    fetchCars();
-  }, []);
-
-  // UseEffect to fetch user data when token is available
-  useEffect(() => {
-    if (token) {
-      axios.defaults.headers.common["Authorization"] = `${token}`;
-      fetchUser();
-    }
-  }, [token]);
-
   // Function to check if user is logged in
   const fetchUser = async () => {
     try {
@@ -89,6 +52,44 @@ export const AppProvider = ({ children }) => {
     setOwner(false);
     axios.defaults.headers.common["Authorization"] = "";
     toast.success("Logged out successfully");
+  };
+
+  // UseEffect to fetch token from localstorage
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setToken(token);
+    fetchCars();
+  }, []);
+
+  // UseEffect to fetch user data when token is available
+  useEffect(() => {
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `${token}`;
+      fetchUser();
+    }
+  }, [token]);
+
+  const value = {
+    axios,
+    navigate,
+    currency,
+    token,
+    setToken,
+    user,
+    setUser,
+    owner,
+    setOwner,
+    showLogin,
+    setShowLogin,
+    pickupDate,
+    setPickupDate,
+    returnDate,
+    setReturnDate,
+    cars,
+    setCars,
+    fetchCars,
+    fetchUser,
+    logout,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
