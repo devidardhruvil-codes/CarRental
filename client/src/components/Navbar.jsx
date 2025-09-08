@@ -5,7 +5,7 @@ import { useAppContext } from "../context/AppContext.jsx";
 import toast from "react-hot-toast";
 
 const Navbar = () => {
-  const { setShowLogin, user, logout, isOwner, axios, setIsOwner } =
+  const { setShowLogin, user, logout, owner, axios, setOwner } =
     useAppContext();
 
   const location = useLocation();
@@ -16,7 +16,7 @@ const Navbar = () => {
     try {
       const { data } = await axios.post("/api/owner/change-role");
       if (data.success) {
-        setIsOwner(true);
+        setOwner(true);
         toast.success(data.message);
       } else {
         toast.error(data.message);
@@ -57,10 +57,10 @@ const Navbar = () => {
 
         <div className="flex max-sm:flex-col items-start sm:items-center gap-6">
           <button
-            onClick={() => (isOwner ? navigate("/owner") : changeRole())}
+            onClick={() => (owner ? navigate("/owner") : changeRole())}
             className="cursor-pointer"
           >
-            {isOwner ? "Dashboard" : "List cars"}
+            {owner ? "Dashboard" : "List cars"}
           </button>
           <button
             onClick={() => {
